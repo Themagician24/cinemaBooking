@@ -6,6 +6,8 @@ import MovieDetails from './pages/MovieDetails.jsx'
 import SeatLayout from './pages/SeatLayout.jsx'
 import MyBookings from './pages/MyBooking.jsx'
 import Favorite from './pages/Favorite.jsx'
+import { Toaster } from 'react-hot-toast'
+import Footer from './components/Footer.jsx'
 
 
 const App = () => {
@@ -18,6 +20,7 @@ const App = () => {
 
   return (
     <>
+      <Toaster position='top-center' reverseOrder={false} />
      {!isAdminRoute && <Navbar />}
       <Routes>
         <Route path='/' element={<Home />} />
@@ -30,6 +33,9 @@ const App = () => {
 
 
       </Routes>
+
+     {!isAdminRoute && <Footer />}
+
       
     </>
   )
