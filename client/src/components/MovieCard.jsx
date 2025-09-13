@@ -1,50 +1,79 @@
 import { StarIcon } from 'lucide-react';
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import timeFormat from '../lib/timeFormat';
 
-const MovieCard = ({movie}) => {
-
+const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
 
   return (
-    <div className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:-translate-y-1 transition duration-300 w-66'>
-      <img
-      onClick={() => { navigate(`/movies/${movie._id}`); scrollTo(0,0) }}
-      src={movie.backdrop_path} 
-      alt=""
-       className='rounded-lg h-52 w-full object-cover object-right-bottom cursor-pointer'/>
-       <p className="font-semibold mt-2 truncate">
-        {movie.title}
-       </p>
+    <div
+      className="relative group w-80 md:w-96 rounded-3xl overflow-hidden shadow-xl 
+        hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all duration-500 
+        transform hover:scale-105 hover:-translate-y-2 cursor-pointer perspective-1000"
+      onClick={() => { navigate(`/movies/${movie._id}`); scrollTo(0, 0); }}
+    >
+      {/* Image + overlay */}
+      <div className="relative h-64 md:h-72 w-full overflow-hidden rounded-3xl">
+        <img
+          src={movie.backdrop_path}
+          alt={movie.title}
+          className="h-full w-full object-cover transform transition duration-700 group-hover:scale-110 group-hover:rotate-1"
+        />
 
-       <p className="text-sm text-gray-400 mt-2">
-      {new Date(movie.release_date).getFullYear()} ● {movie.genres.slice(0, 2).map(genre => genre.name).join(", ")} ● 
-      {timeFormat(movie.runtime)} 
+        {/* Overlay dynamique */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-all duration-500 group-hover:opacity-100 opacity-90"></div>
 
-       </p>
+        {/* Badge Année avec pulse */}
+        <span className="absolute top-4 left-4 bg-primary/90 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-lg animate-pulse">
+          {new Date(movie.release_date).getFullYear()}
+        </span>
 
-       <div className="flex items-center justify-between mt-4 pb-3">
+        {/* Genres flottants */}
+        <span className="absolute bottom-4 left-4 bg-black/60 text-xs px-2 py-1 rounded-md text-gray-200 shadow-sm transition-all duration-300 group-hover:bg-black/80">
+          {movie.genres.slice(0, 2).map((genre) => genre.name).join(", ")}
+        </span>
+      </div>
 
-        <button 
-       onClick={() => { navigate(`/movies/${movie._id}`); scrollTo(0,0) }} 
-        className="px-4 py-2 text-xs bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer">
+      {/* Contenu texte */}
+      <div className="p-5 flex flex-col gap-3">
+        {/* Titre animé */}
+        <h3 className="text-xl md:text-2xl font-bold text-white truncate group-hover:text-primary transition-colors duration-300">
+          {movie.title}
+        </h3>
 
-          Buy Tickets
-        </button>
+        {/* Runtime */}
+        <p className="text-sm text-gray-300 group-hover:text-gray-100 transition-colors">
+          {timeFormat(movie.runtime)}
+        </p>
 
+        {/* Footer : bouton + rating */}
+        <div className="flex items-center justify-between mt-4">
+          {/* Buy Tickets */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/movies/${movie._id}`);
+              scrollTo(0, 0);
+            }}
+            className="px-5 py-2 text-sm font-semibold rounded-full 
+              bg-gradient-to-r from-primary to-pink-600 
+              hover:from-pink-600 hover:to-primary 
+              shadow-lg hover:shadow-primary/50 
+              transition-all duration-300 active:scale-95 text-white"
+          >
+            Buy Tickets
+          </button>
 
-          <p className="flex items-center gap-1 text-sm text-gray-400 mt-1 pr-1">
-            <StarIcon className='w-4 h-4 text-primary fill-primary'/>
+          {/* Rating étoile */}
+          <div className="flex items-center gap-1 text-sm text-gray-200">
+            <StarIcon className="w-5 h-5 text-yellow-400 fill-yellow-400 animate-pulse" />
             {movie.vote_average.toFixed(1)}
-          </p>
-
-        
-
-       </div>
-      
+          </div>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default MovieCard
+export default MovieCard;
