@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2"; // 🔥 import sweetalert2
-import { dummyShowsData } from "../../assets/assets";
+
 import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title";
 import { dateFormat } from "../../lib/dateFormat";
@@ -10,8 +10,11 @@ import {
   PencilIcon,
   TrashIcon,
 } from "lucide-react";
+import { useAppContext } from '../../context/AppContext';
 
 const ListShows = () => {
+
+  const { axios, getToken, user } = useAppContext();
   const currency = "€";
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,24 +22,15 @@ const ListShows = () => {
   // Fetch all shows
   const getAllShows = async () => {
     try {
-      setShows([
-        {
-          id: 1,
-          movie: dummyShowsData[0] || { title: "Avatar", genre: "Sci-Fi" },
-          showDateTime: "2025-06-30T20:30:00.000Z",
-          showPrice: 12,
-          occupiedSeats: { A1: "user_1", B1: "user_2", C1: "user_3" },
-          theater: "Room 1",
-        },
-        {
-          id: 2,
-          movie: dummyShowsData[1] || { title: "The Dark Knight", genre: "Action" },
-          showDateTime: "2025-07-01T18:00:00.000Z",
-          showPrice: 15,
-          occupiedSeats: { A1: "user_4", B2: "user_5" },
-          theater: "Room 2",
-        },
-      ]);
+     const { data } = await axios.get("/api/admin/all-shows", {
+       headers: {
+         Authorization: `Bearer ${await getToken()}`,
+       },
+     });
+     
+      if (data.success) {
+        setShows(data.shows);
+      }
       setLoading(false);
     } catch (error) {
       console.error("Error fetching shows:", error);
@@ -45,8 +39,10 @@ const ListShows = () => {
   };
 
   useEffect(() => {
-    getAllShows();
-  }, []);
+   if (user) {
+     getAllShows();
+   }
+  }, [user]);
 
   // 🔥 Nouvelle méthode de suppression avec SweetAlert2
   const handleDelete = (showId) => {

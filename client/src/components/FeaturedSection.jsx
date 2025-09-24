@@ -8,6 +8,7 @@ import MovieCard from './MovieCard';
 const FeaturedSection = () => {
 
   const navigate = useNavigate();
+  
   return (
     <div className='px-6 md:px-16 lg:px-24 xl:px-44 overflow-hidden'>
 
@@ -19,7 +20,7 @@ const FeaturedSection = () => {
 
 
 
-        <p className="text-gray-300 font-medium text-lg">
+        <p className="text-gray-300 font-medium text-2xl ">
           Now Showing
         </p>
 

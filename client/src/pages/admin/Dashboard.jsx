@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { dummyDashboardData } from '../../assets/assets';
+
 import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
 import { 
@@ -14,8 +14,16 @@ import {
   ClockIcon
 } from 'lucide-react';
 import { dateFormat } from '../../lib/dateFormat';
+import { useAppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
+
+
 
 const Dashboard = () => {
+
+  const {axios, getToken, user, image_base_url } = useAppContext()
+
+
   const currency = import.meta.env.VITE_CURRENCY;
   const [dashboardData, setDashboardData] = useState({
     totalBookings: 0,
@@ -28,15 +36,34 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     // Simulation d'un chargement asynchrone
-    setTimeout(() => {
-      setDashboardData(dummyDashboardData);
-      setLoading(false);
-    }, 1200);
+
+    try {
+
+      const { data } = await axios.get('/api/admin/dashboard', {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        }
+      });
+
+      if (data.success) {
+       setDashboardData(data.dashboardData)
+       setLoading(false) 
+      } else {
+        toast.error(data.message)
+      }
+      
+    } catch (error) {
+      toast.error("Error fetching dashboard data:", error)
+      
+    }
+  
   };
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if(user) {
+   fetchDashboardData()
+    };
+  }, [user]);
 
   const dashboardCards = [
     {
@@ -175,7 +202,7 @@ const Dashboard = () => {
               
               <div className="relative h-60 overflow-hidden">
                 <img 
-                  src={show.movie.poster_path} 
+                  src={image_base_url + show.movie.poster_path} 
                   alt={show.movie.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 />

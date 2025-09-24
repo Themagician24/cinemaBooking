@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { dummyBookingData } from '../../assets/assets';
+
 import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
 import { dateFormat } from '../../lib/dateFormat';
+import { useAppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
 
 const ListBookings = () => {
+
+    const { axios, getToken, user } = useAppContext();
   const currency = import.meta.env.VITE_CURRENCY;
 
   // Données principales et filtrées
@@ -21,16 +25,33 @@ const ListBookings = () => {
 
   // Récupération des données (simulée avec timeout)
   const getAllBookings = async () => {
-    setTimeout(() => {
-      setBookings(dummyBookingData);
-      setFilteredBookings(dummyBookingData);
-      setIsLoading(false);
-    }, 1000);
+   try {
+
+    const { data } = await axios.get('/api/admin/all-bookings', {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      }
+    });
+    if (data.success) {
+      setBookings(data.bookings);
+      setFilteredBookings(data.bookings);
+    } else {
+      toast.error(data.message)
+      
+    }
+    
+   } catch (error) {
+    console.error( error);
+    
+   }
+   setIsLoading(false);
   };
 
   useEffect(() => {
+   if (user) {
     getAllBookings();
-  }, []);
+   }
+  }, [user]);
 
   // Filtrer les bookings selon la recherche
   useEffect(() => {
