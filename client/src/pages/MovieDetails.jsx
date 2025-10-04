@@ -212,7 +212,7 @@ const MovieDetails = () => {
                 
                 {/* Tagline amélioré */}
                 {movie.tagline && (
-                  <p className="text-xl text-gray-300 italic font-light max-w-2xl bg-gradient-to-r from-gray-300 to-gray-400 bg-clip-text text-transparent">
+                  <p className="text-xl text-gray-300 italic font-light max-w-2xl bg-gradient-to-r from-gray-300 to-gray-400 bg-clip-text ">
                     "{movie.tagline}"
                   </p>
                 )}
