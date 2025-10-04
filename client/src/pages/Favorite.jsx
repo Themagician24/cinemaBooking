@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
-import { dummyShowsData } from '../assets/assets'
+// import { dummyShowsData } from '../assets/assets'
 import MovieCard from '../components/MovieCard'
 import BlurCircle from '../components/BlurCircle'
 import { Heart, Search, Filter, Grid3X3, List, Star, Play } from 'lucide-react'
+import { useAppContext } from '../context/AppContext'
 
 const Favorite = () => {
+
+  const {favoriteMovies} = useAppContext();
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('date');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filtrer les films selon la recherche (simulé)
-  const filteredMovies = dummyShowsData.filter(movie => 
+  const filteredMovies = favoriteMovies.filter(movie => 
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

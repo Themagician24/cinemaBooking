@@ -19,11 +19,19 @@ export const AppContext = createContext()
  * @param {React.ReactNode} props.children - Composants enfants à wrapper
  * @returns {JSX.Element} Composant Provider
  */
+
+
 export const AppProvider = ({ children }) => {
+
   // États globaux de l'application
+
+
   const [isAdmin, setIsAdmin] = useState(false); // Statut administrateur de l'utilisateur
+
+
   const [shows, setShows] = useState([]); // Liste de tous les films/spectacles
-  const [favoritesMovies, setFavoritesMovies] = useState([]); // Films favoris de l'utilisateur
+
+  const [favoriteMovies, setFavoriteMovies] = useState([]); // Films favoris de l'utilisateur
   
   // URL de base pour les images TMDB (The Movie Database)
   const image_base_url = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
@@ -33,6 +41,8 @@ export const AppProvider = ({ children }) => {
   const { getToken } = useAuth(); // Fonction pour obtenir le token d'authentification
   
   // Hooks React Router pour la navigation et la localisation
+
+
   const location = useLocation(); // Objet contenant les informations sur la route actuelle
   const navigate = useNavigate(); // Fonction pour naviguer programmatiquement
 
@@ -41,6 +51,8 @@ export const AppProvider = ({ children }) => {
    * @async
    * @returns {Promise<void>}
    */
+
+
   const fetchIsAdmin = async () => {
     try {
       // Requête vers l'API pour vérifier le statut admin
@@ -72,7 +84,7 @@ export const AppProvider = ({ children }) => {
   const fetchShows = async () => {
     try {
       // Requête GET pour obtenir tous les shows
-      const { data } = await axios.get("/api/show/all");
+      const { data } = await axios.get('/api/show/all');
       
       if (data.success) {
         // Si la requête réussit, mise à jour de l'état shows
@@ -83,7 +95,7 @@ export const AppProvider = ({ children }) => {
       }
 
     } catch (error) {
-      console.error("Erreur lors du chargement des shows:", error);
+      console.error("Something went wrong:", error);
     }
   }
 
@@ -92,6 +104,8 @@ export const AppProvider = ({ children }) => {
    * @async
    * @returns {Promise<void>}
    */
+
+
   const fetchFavoriteMovies = async () => {
     try {
       // Requête authentifiée pour obtenir les favoris de l'utilisateur
@@ -103,13 +117,13 @@ export const AppProvider = ({ children }) => {
       
       if (data.success) {
         // Mise à jour de l'état des films favoris
-        setFavoritesMovies(data.movies);
+        setFavoriteMovies(data.movies);
       } else {
         toast.error(data.message);
       }
 
     } catch (error) {
-      console.error("Erreur lors du chargement des favoris:", error);
+      console.error("Something went wrong:", error);
     }
   }
 
@@ -129,7 +143,9 @@ export const AppProvider = ({ children }) => {
   }, [user]);
 
   // Valeur du contexte qui sera accessible via useAppContext()
+
   const value = {
+
     // Instance Axios configurée
     axios,
     // Méthodes
@@ -139,10 +155,12 @@ export const AppProvider = ({ children }) => {
     user,
     getToken,
     navigate,
+    favoriteMovies,
+    
     // États de l'application
     isAdmin,
     shows,
-    favoritesMovies,
+   
     // Configuration
     image_base_url,
   }

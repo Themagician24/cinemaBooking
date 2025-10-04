@@ -6,7 +6,15 @@ import { useAppContext } from '../context/AppContext';
 
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
-  const {image_base_url} = useAppContext();
+  const { image_base_url } = useAppContext();
+
+  // Sécurisation des propriétés
+  const genres = movie.genres || [];
+  const backdrop = movie.backdrop_path || '';
+  const title = movie.title || 'Untitled';
+  const runtime = movie.runtime || 0;
+  const releaseDate = movie.release_date || '';
+  const voteAverage = movie.vote_average ?? 0;
 
   return (
     <div
@@ -17,41 +25,44 @@ const MovieCard = ({ movie }) => {
     >
       {/* Image + overlay */}
       <div className="relative h-64 md:h-72 w-full overflow-hidden rounded-3xl">
-        <img
-          src={image_base_url + movie.backdrop_path}
-          alt={movie.title}
-          className="h-full w-full object-cover transform transition duration-700 group-hover:scale-110 group-hover:rotate-1"
-        />
+        {backdrop ? (
+          <img
+            src={image_base_url + backdrop}
+            alt={title}
+            className="h-full w-full object-cover transform transition duration-700 group-hover:scale-110 group-hover:rotate-1"
+          />
+        ) : (
+          <div className="h-full w-full bg-gray-700 flex items-center justify-center text-white">
+            No Image
+          </div>
+        )}
 
-        {/* Overlay dynamique */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-all duration-500 group-hover:opacity-100 opacity-90"></div>
 
-        {/* Badge Année avec pulse */}
-        <span className="absolute top-4 left-4 bg-primary/90 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-lg animate-pulse">
-          {new Date(movie.release_date).getFullYear()}
-        </span>
+        {releaseDate && (
+          <span className="absolute top-4 left-4 bg-primary/90 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-lg animate-pulse">
+            {new Date(releaseDate).getFullYear()}
+          </span>
+        )}
 
-        {/* Genres flottants */}
-        <span className="absolute bottom-4 left-4 bg-black/60 text-xs px-2 py-1 rounded-md text-gray-200 shadow-sm transition-all duration-300 group-hover:bg-black/80">
-          {movie.genres.slice(0, 2).map((genre) => genre.name).join(", ")}
-        </span>
+        {genres.length > 0 && (
+          <span className="absolute bottom-4 left-4 bg-black/60 text-xs px-2 py-1 rounded-md text-gray-200 shadow-sm transition-all duration-300 group-hover:bg-black/80">
+            {genres.slice(0, 6).map((genre) => genre.name).join(", ")}
+          </span>
+        )}
       </div>
 
       {/* Contenu texte */}
       <div className="p-5 flex flex-col gap-3">
-        {/* Titre animé */}
         <h3 className="text-xl md:text-2xl font-bold text-white truncate group-hover:text-primary transition-colors duration-300">
-          {movie.title}
+          {title}
         </h3>
 
-        {/* Runtime */}
         <p className="text-sm text-gray-300 group-hover:text-gray-100 transition-colors">
-          {timeFormat(movie.runtime)}
+          {timeFormat(runtime)}
         </p>
 
-        {/* Footer : bouton + rating */}
         <div className="flex items-center justify-between mt-4">
-          {/* Buy Tickets */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -67,10 +78,9 @@ const MovieCard = ({ movie }) => {
             Buy Tickets
           </button>
 
-          {/* Rating étoile */}
           <div className="flex items-center gap-1 text-sm text-gray-200">
             <StarIcon className="w-5 h-5 text-yellow-400 fill-yellow-400 animate-pulse" />
-            {movie.vote_average.toFixed(1)}
+            {voteAverage.toFixed(1)}
           </div>
         </div>
       </div>
